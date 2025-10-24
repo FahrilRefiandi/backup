@@ -1,0 +1,27 @@
+{
+  "settings": {
+    "destination_directory": "/root/backup/destination",
+    "db_user": "root",
+    "db_password": ""
+  },
+  "items": [
+    {
+      "name": "blogtopia",
+      "path": "/var/www/teknovate",
+      "files": ["storage",".env"],
+      "db_name": "teka_landing"
+    },
+    {
+      "name": "Teknovate Kasir",
+      "path": "/var/www/teknovate",
+      "files": ["storage", ".env"],
+      "db_name": "laravel"
+    },
+    {
+      "name": "tekibot",
+      "path": "/var/www/teknovate",
+      "files": [],
+      "db_name": "tekibot"
+    }
+  ]
+}
