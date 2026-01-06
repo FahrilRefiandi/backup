@@ -17,11 +17,13 @@ read -p "Masukkan jam untuk jadwal backup (0-23): " B_HOUR
 read -p "Masukkan menit untuk jadwal backup (0-59): " B_MIN
 
 BACKUP_SCRIPT="$BASE_DIR/backup.sh"
-CRON_JOB="$B_MIN $B_HOUR * * * /bin/bash $BACKUP_SCRIPT"
+LOG_FILE="$BASE_DIR/backup.log"
+CRON_JOB="$B_MIN $B_HOUR * * * /bin/bash $BACKUP_SCRIPT >> $LOG_FILE 2>&1"
 
 (sudo crontab -l 2>/dev/null; echo "$CRON_JOB") | sudo crontab -
 
-echo "Cronjob berhasil ditambahkan ke daftar untuk jam $B_HOUR:$B_MIN"
+echo "Cronjob berhasil ditambahkan dengan sistem logging."
+echo "Log dapat dilihat di: $LOG_FILE"
 echo "------------------------------------------------"
 echo "Rclone terbaru dan dependensi berhasil terpasang."
 echo "Sekarang jalankan: rclone config"
