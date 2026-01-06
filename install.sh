@@ -1,18 +1,20 @@
 #!/bin/bash
 
+BASE_DIR=$(dirname "$(readlink -f "$0")")
+
 sudo apt update
-sudo apt install -y jq rclone mysql-client
+sudo apt install -y jq mysql-client
+sudo curl https://rclone.org/install.sh | sudo bash
 
-mkdir -p destination
+mkdir -p "$BASE_DIR/destination"
 
-if [ ! -f config.json ]; then
-    cp config.json.example config.json
+if [ ! -f "$BASE_DIR/config.json" ]; then
+    cp "$BASE_DIR/config.json.example" "$BASE_DIR/config.json"
 fi
 
 echo "------------------------------------------------"
-echo "Instalasi Berhasil."
-echo "Sekarang silakan buat remote baru di rclone."
-echo "Gunakan nama remote gdrive"
+echo "Rclone terbaru dan dependensi berhasil terpasang."
+echo "Sekarang jalankan: rclone config"
+echo "Pilih 'N' pada 'Use auto config' dan masukkan"
+echo "JSON token yang didapat dari laptop Anda."
 echo "------------------------------------------------"
-
-rclone config
