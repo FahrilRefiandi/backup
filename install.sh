@@ -1,7 +1,18 @@
 #!/bin/bash
 
-echo "Installing dependencies..."
 sudo apt update
 sudo apt install -y jq rclone mysql-client
 
-echo "Setup selesai. Silakan jalankan 'rclone config' untuk menghubungkan cloud Anda."
+mkdir -p destination
+
+if [ ! -f config.json ]; then
+    cp config.json.example config.json
+fi
+
+echo "------------------------------------------------"
+echo "Instalasi Berhasil."
+echo "Sekarang silakan buat remote baru di rclone."
+echo "Gunakan nama remote gdrive"
+echo "------------------------------------------------"
+
+rclone config
