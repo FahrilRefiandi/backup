@@ -1,27 +1,28 @@
 #!/bin/bash
 
 CONFIG_FILE="/root/backup/scripts/backup_config.json"
+PYTHON_UPLOADER="/root/backup/scripts/upload.py"
+SERVICE_ACCOUNT_JSON="/root/backup/scripts/service-account.json"
+GDRIVE_FOLDER_ID="ISI_DENGAN_ID_FOLDER_GOOGLE_DRIVE_ANDA"
 
-check_dependencies() {
-    local deps=("jq" "rclone" "mysqldump")
-    for dep in "${deps[@]}"; do
-        if ! command -v "$dep" &> /dev/null; then
-            echo "Error: $dep tidak ditemukan. Jalankan ./setup.sh atau install manual."
-            exit 1
-        fi
-    done
-}
+if ! command -v jq &> /dev/null; then
+    echo "Error: 'jq' tidak ditemukan."
+    exit 1
+fi
 
-check_dependencies
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Error: Konfigurasi tidak ditemukan."
+    exit 1
+fi
 
 DEST_DIR=$(jq -r '.settings.destination_directory' "$CONFIG_FILE")
 DB_USER=$(jq -r '.settings.db_user' "$CONFIG_FILE")
 DB_PASS=$(jq -r '.settings.db_password' "$CONFIG_FILE")
-RCLONE_REMOTE=$(jq -r '.settings.rclone_remote' "$CONFIG_FILE")
-RCLONE_PATH=$(jq -r '.settings.rclone_path' "$CONFIG_FILE")
 
 mkdir -p "$DEST_DIR"
 TIMESTAMP=$(date +%Y-%m-%d-%H%M%S)
+
+echo "### Memulai Backup (Service Account) ###"
 
 jq -c '.items[]' "$CONFIG_FILE" | while read -r item; do
     PROJECT_NAME=$(echo "$item" | jq -r '.name')
@@ -36,6 +37,8 @@ jq -c '.items[]' "$CONFIG_FILE" | while read -r item; do
 
     STAGING_DIR="$DEST_DIR/staging_${PROJECT_NAME}_${TIMESTAMP}"
     mkdir -p "$STAGING_DIR"
+
+    echo "Memproses: $PROJECT_NAME..."
 
     if [ -n "$DB_NAME" ]; then
         mysqldump -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" > "$STAGING_DIR/database_dump.sql"
@@ -53,8 +56,16 @@ jq -c '.items[]' "$CONFIG_FILE" | while read -r item; do
     tar -czf "$local_file" -C "$STAGING_DIR" .
 
     if [ $? -eq 0 ]; then
-        rclone move "$local_file" "$RCLONE_REMOTE:$RCLONE_PATH/$PROJECT_NAME"
+        echo "  -> Mengunggah ke Google Drive..."
+        python3 "$PYTHON_UPLOADER" "$local_file" "$GDRIVE_FOLDER_ID" "$SERVICE_ACCOUNT_JSON"
+        
+        if [ $? -eq 0 ]; then
+            rm "$local_file"
+            echo "Sukses: $PROJECT_NAME terunggah."
+        fi
     fi
 
     rm -rf "$STAGING_DIR"
 done
+
+echo "Selesai."
