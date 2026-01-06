@@ -13,8 +13,18 @@ if [ ! -f "$BASE_DIR/config.json" ]; then
 fi
 
 echo "------------------------------------------------"
+read -p "Masukkan jam untuk jadwal backup (0-23): " B_HOUR
+read -p "Masukkan menit untuk jadwal backup (0-59): " B_MIN
+
+BACKUP_SCRIPT="$BASE_DIR/backup.sh"
+CRON_JOB="$B_MIN $B_HOUR * * * /bin/bash $BACKUP_SCRIPT"
+
+(sudo crontab -l 2>/dev/null; echo "$CRON_JOB") | sudo crontab -
+
+echo "Cronjob berhasil ditambahkan ke daftar untuk jam $B_HOUR:$B_MIN"
+echo "------------------------------------------------"
 echo "Rclone terbaru dan dependensi berhasil terpasang."
 echo "Sekarang jalankan: rclone config"
-echo "Pilih 'N' pada 'Use auto config' dan masukkan"
+echo "Pilih 'N' pada 'Use web browser' dan masukkan"
 echo "JSON token yang didapat dari laptop Anda."
 echo "------------------------------------------------"

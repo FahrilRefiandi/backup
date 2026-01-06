@@ -4,7 +4,7 @@
     "db_user": "root",
     "db_password": "password_anda",
     "rclone_remote": "gdrive",
-    "rclone_path": "Backups/Server1"
+    "rclone_path": "Backups"
   },
   "items": [
     {
