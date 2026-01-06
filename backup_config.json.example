@@ -1,16 +1,17 @@
 {
   "settings": {
-    "destination_directory": "/root/backup/destination",
+    "destination_folder": "destination",
     "db_user": "root",
     "db_password": "",
-    "rclone_remote": "gdrive",
-    "rclone_path": "ServerBackups/Teknovate"
+    "python_uploader": "upload.py",
+    "service_account_json": "service-account.json",
+    "gdrive_folder_id": "key.json"
   },
   "items": [
     {
       "name": "blogtopia",
       "path": "/var/www/teknovate",
-      "files": ["storage",".env"],
+      "files": ["storage", ".env"],
       "db_name": "teka_landing"
     },
     {
