@@ -2,29 +2,16 @@
   "settings": {
     "destination_folder": "destination",
     "db_user": "root",
-    "db_password": "",
-    "python_uploader": "upload.py",
-    "service_account_json": "service-account.json",
-    "gdrive_folder_id": "key.json"
+    "db_password": "password_anda",
+    "rclone_remote": "gdrive",
+    "rclone_path": "Backups/Server1"
   },
   "items": [
     {
-      "name": "blogtopia",
-      "path": "/var/www/teknovate",
+      "name": "nama_proyek",
+      "path": "/var/www/proyek",
       "files": ["storage", ".env"],
-      "db_name": "teka_landing"
-    },
-    {
-      "name": "Teknovate Kasir",
-      "path": "/var/www/teknovate",
-      "files": ["storage", ".env"],
-      "db_name": "laravel"
-    },
-    {
-      "name": "tekibot",
-      "path": "/var/www/teknovate",
-      "files": [],
-      "db_name": "tekibot"
+      "db_name": "nama_database"
     }
   ]
 }
