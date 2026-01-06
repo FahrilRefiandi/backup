@@ -2,7 +2,9 @@
   "settings": {
     "destination_directory": "/root/backup/destination",
     "db_user": "root",
-    "db_password": ""
+    "db_password": "",
+    "rclone_remote": "gdrive",
+    "rclone_path": "ServerBackups/Teknovate"
   },
   "items": [
     {
