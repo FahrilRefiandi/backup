@@ -1,8 +1,6 @@
 {
   "settings": {
     "destination_folder": "destination",
-    "db_user": "root",
-    "db_password": "password_anda",
     "rclone_remote": "gdrive",
     "rclone_path": "Backups"
   },
@@ -12,14 +10,18 @@
       "path": "/var/www/proyek",
       "files": ["storage", ".env"],
       "database": "mysql",
-      "db_name": "nama_database"
+      "db_name": "nama_database",
+      "db_user": "root",
+      "db_password": "password_anda"
     },
     {
       "name": "nama_proyek",
       "path": "/var/www/proyek",
       "files": ["storage", ".env"],
       "database": "pgsql",
-      "db_name": "nama_database"
+      "db_name": "nama_database",
+      "db_user": "postgres",
+      "db_password": "password_pg"
     }
   ]
 }

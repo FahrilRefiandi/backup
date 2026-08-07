@@ -15,8 +15,6 @@ fi
 
 DEST_FOLDER=$(jq -r '.settings.destination_folder' "$CONFIG_FILE")
 DEST_DIR="$BASE_DIR/$DEST_FOLDER"
-DB_USER=$(jq -r '.settings.db_user' "$CONFIG_FILE")
-DB_PASS=$(jq -r '.settings.db_password' "$CONFIG_FILE")
 RCLONE_REMOTE=$(jq -r '.settings.rclone_remote' "$CONFIG_FILE")
 RCLONE_PATH=$(jq -r '.settings.rclone_path' "$CONFIG_FILE")
 
@@ -32,6 +30,8 @@ jq -c '.items[]' "$CONFIG_FILE" | while read -r item; do
     PROJECT_PATH=$(echo "$item" | jq -r '.path')
     DB_TYPE=$(echo "$item" | jq -r '.database // "mysql"')
     DB_NAME=$(echo "$item" | jq -r '.db_name // ""')
+    DB_USER=$(echo "$item" | jq -r '.db_user // ""')
+    DB_PASS=$(echo "$item" | jq -r '.db_password // ""')
 
     echo "[Project: $PROJECT_NAME] Memulai proses..."
 
