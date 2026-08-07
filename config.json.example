@@ -11,6 +11,14 @@
       "name": "nama_proyek",
       "path": "/var/www/proyek",
       "files": ["storage", ".env"],
+      "database": "mysql",
+      "db_name": "nama_database"
+    },
+    {
+      "name": "nama_proyek",
+      "path": "/var/www/proyek",
+      "files": ["storage", ".env"],
+      "database": "pgsql",
       "db_name": "nama_database"
     }
   ]

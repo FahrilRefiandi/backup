@@ -30,6 +30,7 @@ echo "=========================================================="
 jq -c '.items[]' "$CONFIG_FILE" | while read -r item; do
     PROJECT_NAME=$(echo "$item" | jq -r '.name')
     PROJECT_PATH=$(echo "$item" | jq -r '.path')
+    DB_TYPE=$(echo "$item" | jq -r '.database // "mysql"')
     DB_NAME=$(echo "$item" | jq -r '.db_name // ""')
 
     echo "[Project: $PROJECT_NAME] Memulai proses..."
@@ -45,14 +46,24 @@ jq -c '.items[]' "$CONFIG_FILE" | while read -r item; do
     mkdir -p "$STAGING_DIR"
 
     if [ -n "$DB_NAME" ]; then
-        echo "[Project: $PROJECT_NAME] Dumping database: $DB_NAME..."
-        export MYSQL_PWD="$DB_PASS"
-        if mysqldump -u"$DB_USER" "$DB_NAME" > "$STAGING_DIR/database_dump.sql" 2>/dev/null; then
-            echo "[Project: $PROJECT_NAME] Database dump berhasil."
+        echo "[Project: $PROJECT_NAME] Dumping database: $DB_NAME ($DB_TYPE)..."
+        if [ "$DB_TYPE" = "pgsql" ]; then
+            export PGPASSWORD="$DB_PASS"
+            if pg_dump -U "$DB_USER" "$DB_NAME" > "$STAGING_DIR/database_dump.sql" 2>/dev/null; then
+                echo "[Project: $PROJECT_NAME] Database dump pgsql berhasil."
+            else
+                echo "[Project: $PROJECT_NAME] ERROR: Database dump pgsql gagal."
+            fi
+            unset PGPASSWORD
         else
-            echo "[Project: $PROJECT_NAME] ERROR: Database dump gagal."
+            export MYSQL_PWD="$DB_PASS"
+            if mysqldump -u"$DB_USER" "$DB_NAME" > "$STAGING_DIR/database_dump.sql" 2>/dev/null; then
+                echo "[Project: $PROJECT_NAME] Database dump mysql berhasil."
+            else
+                echo "[Project: $PROJECT_NAME] ERROR: Database dump mysql gagal."
+            fi
+            unset MYSQL_PWD
         fi
-        unset MYSQL_PWD
     fi
 
     if [ ${#FILES_TO_BACKUP[@]} -gt 0 ]; then
