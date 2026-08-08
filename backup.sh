@@ -49,7 +49,9 @@ jq -c '.items[]' "$CONFIG_FILE" | while read -r item; do
         echo "[Project: $PROJECT_NAME] Dumping database: $DB_NAME ($DB_TYPE)..."
         if [ "$DB_TYPE" = "pgsql" ]; then
             export PGPASSWORD="$DB_PASS"
-            if pg_dump -U "$DB_USER" --inserts "$DB_NAME" > "$STAGING_DIR/${DB_NAME}.sql" 2>/dev/null; then
+            if pg_dump -U "$DB_USER" --clean --if-exists --inserts "$DB_NAME" > "$STAGING_DIR/${DB_NAME}.sql" 2>/dev/null; then
+                # Hapus meta-command \restrict dan \unrestrict (bawaan pg_dump versi baru) agar kompatibel dengan berbagai SQL client
+                sed -i '/^\\restrict/d; /^\\unrestrict/d' "$STAGING_DIR/${DB_NAME}.sql"
                 echo "[Project: $PROJECT_NAME] Database dump pgsql berhasil."
             else
                 echo "[Project: $PROJECT_NAME] ERROR: Database dump pgsql gagal."
