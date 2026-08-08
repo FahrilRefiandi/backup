@@ -49,7 +49,7 @@ jq -c '.items[]' "$CONFIG_FILE" | while read -r item; do
         echo "[Project: $PROJECT_NAME] Dumping database: $DB_NAME ($DB_TYPE)..."
         if [ "$DB_TYPE" = "pgsql" ]; then
             export PGPASSWORD="$DB_PASS"
-            if pg_dump -U "$DB_USER" "$DB_NAME" > "$STAGING_DIR/database_dump.sql" 2>/dev/null; then
+            if pg_dump -U "$DB_USER" --inserts "$DB_NAME" > "$STAGING_DIR/${DB_NAME}.sql" 2>/dev/null; then
                 echo "[Project: $PROJECT_NAME] Database dump pgsql berhasil."
             else
                 echo "[Project: $PROJECT_NAME] ERROR: Database dump pgsql gagal."
@@ -57,7 +57,7 @@ jq -c '.items[]' "$CONFIG_FILE" | while read -r item; do
             unset PGPASSWORD
         else
             export MYSQL_PWD="$DB_PASS"
-            if mysqldump -u"$DB_USER" "$DB_NAME" > "$STAGING_DIR/database_dump.sql" 2>/dev/null; then
+            if mysqldump -u"$DB_USER" "$DB_NAME" > "$STAGING_DIR/${DB_NAME}.sql" 2>/dev/null; then
                 echo "[Project: $PROJECT_NAME] Database dump mysql berhasil."
             else
                 echo "[Project: $PROJECT_NAME] ERROR: Database dump mysql gagal."
