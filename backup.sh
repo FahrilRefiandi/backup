@@ -49,7 +49,8 @@ jq -c '.items[]' "$CONFIG_FILE" | while read -r item; do
         echo "[Project: $PROJECT_NAME] Dumping database: $DB_NAME ($DB_TYPE)..."
         if [ "$DB_TYPE" = "pgsql" ]; then
             export PGPASSWORD="$DB_PASS"
-            if pg_dump -U "$DB_USER" --clean --if-exists --inserts "$DB_NAME" > "$STAGING_DIR/${DB_NAME}.sql" 2>/dev/null; then
+            # Menambahkan -h 127.0.0.1 dan menghapus 2>/dev/null
+            if pg_dump -h 127.0.0.1 -U "$DB_USER" --clean --if-exists --inserts "$DB_NAME" > "$STAGING_DIR/${DB_NAME}.sql"; then
                 # Hapus meta-command \restrict dan \unrestrict (bawaan pg_dump versi baru) agar kompatibel dengan berbagai SQL client
                 sed -i '/^\\restrict/d; /^\\unrestrict/d' "$STAGING_DIR/${DB_NAME}.sql"
                 echo "[Project: $PROJECT_NAME] Database dump pgsql berhasil."
@@ -59,7 +60,8 @@ jq -c '.items[]' "$CONFIG_FILE" | while read -r item; do
             unset PGPASSWORD
         else
             export MYSQL_PWD="$DB_PASS"
-            if mysqldump -u"$DB_USER" "$DB_NAME" > "$STAGING_DIR/${DB_NAME}.sql" 2>/dev/null; then
+            # Menambahkan -h 127.0.0.1 dan menghapus 2>/dev/null
+            if mysqldump -h 127.0.0.1 -u"$DB_USER" "$DB_NAME" > "$STAGING_DIR/${DB_NAME}.sql"; then
                 echo "[Project: $PROJECT_NAME] Database dump mysql berhasil."
             else
                 echo "[Project: $PROJECT_NAME] ERROR: Database dump mysql gagal."
